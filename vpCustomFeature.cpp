@@ -22,7 +22,6 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
-
 void
 vpCustomFeature::init()
 {
@@ -44,7 +43,8 @@ vpCustomFeature::vpCustomFeature() : A_star(0)
 }
 
 
-void vpCustomFeature::setValues (const double angle, const double u, const double v, const double Area, const double dummy1, const double dummy2)
+void
+vpCustomFeature::setValues (const double angle, const double u, const double v, const double Area, const double dummy1, const double dummy2)
 {
   s[0] = angle;
   s[1] = u;
@@ -56,7 +56,8 @@ void vpCustomFeature::setValues (const double angle, const double u, const doubl
   for (int i = 0; i < 6; i++) flags[i] = true;
 }
 
-void vpCustomFeature::setA_star (const double A_star_)
+void
+vpCustomFeature::setA_star (const double A_star_)
 {
   this->A_star = A_star_;
   for (unsigned int i = 6; i < nbParameters; i++) flags[i] = true;
@@ -65,7 +66,7 @@ void vpCustomFeature::setA_star (const double A_star_)
 // Interaction Matrix
 // Contains only identity matrix yet
 vpMatrix
-vpCustomFeature::interaction ()
+vpCustomFeature::interaction (const unsigned int select= FEATURE_ALL)
 {
     vpMatrix L ;
 
@@ -111,7 +112,8 @@ vpCustomFeature::interaction ()
 
 
 vpColVector
-vpCustomFeature::error (const vpBasicFeature &s_star)
+vpCustomFeature::error (const vpBasicFeature &s_star,
+                        const unsigned int select= FEATURE_ALL)
 {
   vpColVector e(0), eangle(1), eu(1), ev(1), eArea(1), edummy1(1), edummy2(1);
   eangle[0] = s[0] - s_star[0];
@@ -136,7 +138,7 @@ vpCustomFeature::error (const vpBasicFeature &s_star)
 }
 
 void
-vpCustomFeature::print () const
+vpCustomFeature::print (const unsigned int select= FEATURE_ALL) const
 {
   std::cout << "\tangle: " << s[0] << std::endl;
   std::cout << "\tu: " << s[1] << std::endl;
@@ -173,3 +175,24 @@ vpCustomFeature::buildFrom (const double angle, const double u, const double v,
   this->A_star = A_star_;
   for (int i = 0; i < 6; i++) flags[i] = true;
 }
+
+
+// void
+// vpCustomFeature::display(const vpCameraParameters &cam,
+//                        const vpImage<unsigned char> &I,
+//                        const vpColor &color,
+//                        unsigned int thickness) const
+// {}
+
+// void
+// vpCustomFeature::display(const vpCameraParameters &cam,
+//                const vpImage<vpRGBa> &I,
+//                const vpColor &color=vpColor::green,
+//                unsigned int thickness=1) const
+// {}
+
+vpCustomFeature *vpCustomFeature::duplicate() const
+ {
+   vpCustomFeature *feature = new vpCustomFeature;
+   return feature;
+ }

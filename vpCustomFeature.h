@@ -24,9 +24,19 @@ class vpCustomFeature : public vpBasicFeature
   void buildFrom (const double angle, const double u, const double v,
                   const double Area, const double dummy1, const double dummy2,
                   const double A_star);
+  void display(const vpCameraParameters &cam,
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam,
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
 
-  vpColVector error (const vpBasicFeature &s_star);
-                     //const unsigned int select = FEATURE_ALL);
+  vpCustomFeature *duplicate() const ;
+
+  vpColVector error (const vpBasicFeature &s_star,
+                     const unsigned int select = FEATURE_ALL);
 
   double getAngle() const { return s[0] ; }
 
@@ -36,11 +46,15 @@ class vpCustomFeature : public vpBasicFeature
 
   double getArea() const { return s[3]; }
 
+  double getdummy1() const { return s[4]; }
+
+  double getdummy2() const { return s[5]; }
+
   void init();
 
-  vpMatrix interaction ();
+  vpMatrix interaction (const unsigned int select= FEATURE_ALL);
 
-  void print () const;
+  void print (const unsigned int select= FEATURE_ALL) const;
 
   void setValues (const double angle, const double u, const double v,
                   const double Area, const double dummy1, const double dummy2);

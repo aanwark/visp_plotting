@@ -9,6 +9,9 @@
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
 #include "vpCustomFeature.h"
+#include <cmath>
+
+#define PI 3.14159265
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
@@ -31,31 +34,47 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
   }
 }
 
+// vpCustomFeature get_features (vpFeaturePoint p[4])
+// {
+//   //vpCustomFeature p_hat;
+//   double angle, u, v, Area;
+//   //get angle
+//   angle = atan2 (p[1].get_y() - p[0].get_y(), p[1].get_x() - p[0].get_x());
+
+//   if (abs(angle) > PI / 2)
+//     angle -= PI / 2;
+
+// }
+
 int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
-    std::vector<vpPoint> point(4) ;
-    point[0].setWorldCoordinates(-0.1,-0.1, 0);
-    point[1].setWorldCoordinates( 0.1,-0.1, 0);
-    point[2].setWorldCoordinates( 0.1, 0.1, 0);
-    point[3].setWorldCoordinates(-0.1, 0.1, 0);
+    // std::vector<vpPoint> point(4) ;
+    // point[0].setWorldCoordinates(-0.1,-0.1, 0);
+    // point[1].setWorldCoordinates( 0.1,-0.1, 0);
+    // point[2].setWorldCoordinates( 0.1, 0.1, 0);
+    // point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
     task.setLambda(0.5);
 
-    vpFeaturePoint p[4], pd[4] ;
-    for (unsigned int i = 0 ; i < 4 ; i++) {
-      point[i].track(cdMo);
-      vpFeatureBuilder::create(pd[i], point[i]);
-      point[i].track(cMo);
-      vpFeatureBuilder::create(p[i], point[i]);
-      task.addFeature(p[i], pd[i]);
-    }
+    // vpFeaturePoint p[4], pd[4] ;
+    // for (unsigned int i = 0 ; i < 4 ; i++) {
+    //   point[i].track(cdMo);
+    //   vpFeatureBuilder::create(pd[i], point[i]);
+    //   point[i].track(cMo);
+    //   vpFeatureBuilder::create(p[i], point[i]);
+    //   task.addFeature(p[i], pd[i]);
+    //  }
+    vpCustomFeature p, pd;
+    p.buildFrom (25, 10, 10, 20, 0, 0);
+    pd.buildFrom (0, 0, 0, 0, 0, 0);
+    task.addFeature(p, pd);
 
     vpHomogeneousMatrix wMc, wMo;
     vpSimulatorCamera robot;
@@ -93,24 +112,25 @@ int main()
       // This part is responsible for control
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
-      for (unsigned int i = 0 ; i < 4 ; i++) {
-        point[i].track(cMo);
-        vpFeatureBuilder::create(p[i], point[i]);
-      }
+      // for (unsigned int i = 0 ; i < 4 ; i++) {
+      //   point[i].track(cMo);
+      //   vpFeatureBuilder::create(p[i], point[i]);
+      // }
+
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       sim.setCameraPositionRelObj(cMo);
 
-      vpDisplay::display(Iint) ;
-      vpDisplay::display(Iext) ;
+      // vpDisplay::display(Iint) ;
+      // vpDisplay::display(Iext) ;
 
-      sim.getInternalImage(Iint);
-      sim.getExternalImage(Iext);
+      // sim.getInternalImage(Iint);
+      // sim.getExternalImage(Iext);
 
-      display_trajectory(Iint, point, cMo, cam);
-      vpDisplay::flush(Iint);
-      vpDisplay::flush(Iext);
+      // display_trajectory(Iint, point, cMo, cam);
+      // vpDisplay::flush(Iint);
+      // vpDisplay::flush(Iext);
 
       // A click in the internal view to exit
       if (vpDisplay::getClick(Iint, false))
