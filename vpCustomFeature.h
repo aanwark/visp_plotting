@@ -38,7 +38,7 @@ class vpCustomFeature : public vpBasicFeature
 
   void init();
 
-  vpMatrix interaction (const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction ();
 
   void print () const;
 

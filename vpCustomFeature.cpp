@@ -63,6 +63,52 @@ void vpCustomFeature::setA_star (const double A_star_)
 }
 
 // Interaction Matrix
+// Contains only identity matrix yet
+vpMatrix
+vpCustomFeature::interaction ()
+{
+    vpMatrix L ;
+
+    L.resize(6,6) ;
+
+    L.eye();
+
+  if (deallocate == vpBasicFeature::user)
+  {
+    for (unsigned int i = 0; i < nbParameters; i++)
+    {
+      if (flags[i] == false)
+      {
+        switch(i){
+        case 0:
+          vpTRACE("Warning !!!  The interaction matrix is computed but angle was not set yet");
+        break;
+        case 1:
+          vpTRACE("Warning !!!  The interaction matrix is computed but u was not set yet");
+        break;
+        case 2:
+          vpTRACE("Warning !!!  The interaction matrix is computed but v was not set yet");
+        break;
+        case 3:
+          vpTRACE("Warning !!!  The interaction matrix is computed but Area was not set yet");
+        break;
+        case 4:
+          vpTRACE("Warning !!!  The interaction matrix is computed but dummy1 was not set yet");
+        break;
+        case 5:
+          vpTRACE("Warning !!!  The interaction matrix is computed but dummy1 was not set yet");
+        break;
+        default:
+          vpTRACE("Problem during the reading of the variable flags");
+        }
+      }
+    }
+    resetFlags();
+  }
+
+  return L;
+}
+
 
 vpColVector
 vpCustomFeature::error (const vpBasicFeature &s_star)
