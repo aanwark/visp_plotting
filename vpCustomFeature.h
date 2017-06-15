@@ -40,16 +40,12 @@ class vpCustomFeature : public vpBasicFeature
 
   vpMatrix interaction (const unsigned int select = FEATURE_ALL);
 
-  void print (const unsigned int select = FEATURE_ALL) const;
+  void print () const;
 
   void setValues (const double angle, const double u, const double v,
                   const double Area, const double dummy1, const double dummy2);
 
   void setA_star (const double A_star);
-
- public:
-
-  static unsigned int selectValues();
 
 };
 

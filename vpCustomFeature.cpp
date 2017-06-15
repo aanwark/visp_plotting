@@ -90,7 +90,7 @@ vpCustomFeature::error (const vpBasicFeature &s_star)
 }
 
 void
-vpCustomFeature::print (const unsigned int select = FEATURE_ALL) const
+vpCustomFeature::print () const
 {
   std::cout << "\tangle: " << s[0] << std::endl;
   std::cout << "\tu: " << s[1] << std::endl;
@@ -110,5 +110,20 @@ vpCustomFeature::buildFrom (const double angle, const double u, const double v,
   s[3] = Area;
   s[4] = dummy1;
   s[5] = dummy2;
+  for (int i = 0; i < 6; i++) flags[i] = true;
+}
+
+void
+vpCustomFeature::buildFrom (const double angle, const double u, const double v,
+                  const double Area, const double dummy1, const double dummy2,
+                  const double A_star_)
+{
+  s[0] = angle;
+  s[1] = u;
+  s[2] = v;
+  s[3] = Area;
+  s[4] = dummy1;
+  s[5] = dummy2;
+  this->A_star = A_star_;
   for (int i = 0; i < 6; i++) flags[i] = true;
 }
