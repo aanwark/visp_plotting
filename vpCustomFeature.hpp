@@ -8,7 +8,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
-class vpCustomFeature : public vpBasicFeature
+class vpCustomFeature  : public vpBasicFeature
 {
  private:
   double A_star;
@@ -16,7 +16,23 @@ class vpCustomFeature : public vpBasicFeature
  public:
   vpCustomFeature();
   // Destructor
-  virtual ~vpCustomFeature() {}
+  virtual ~vpCustomFeature() {};
+
+  // void init() ;
+
+  // void display(const vpCameraParameters &cam,
+  //              const vpImage<unsigned char> &I,
+  //              const vpColor &color=vpColor::green,
+  //              unsigned int thickness=1) const {};
+  // void display(const vpCameraParameters &cam,
+  //              const vpImage<vpRGBa> &I,
+  //              const vpColor &color=vpColor::green,
+  //              unsigned int thickness=1) const {} ;
+
+  // void print (const unsigned int select= FEATURE_ALL) const {};
+  // vpMatrix interaction (const unsigned int select= FEATURE_ALL) {vpMatrix a; return a;};
+  // vpCustomFeature *duplicate() const {return 0;};
+
 
   //dummy1 and dummy2 are zero values
   void buildFrom (const double angle, const double u, const double v,
@@ -60,6 +76,9 @@ class vpCustomFeature : public vpBasicFeature
                   const double Area, const double dummy1, const double dummy2);
 
   void setA_star (const double A_star);
+
+ public:
+  static unsigned int selectAll() {return FEATURE_ALL;}
 
 };
 
