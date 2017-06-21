@@ -145,15 +145,15 @@ int main()
 #if defined VISP_HAVE_X11
     vpDisplayX displayInt(Iint, 0, 0, "Internal view");
     vpDisplayX displayExt(Iext, 670, 0, "External view");
-    printf("X11\n");
+    // printf("X11\n");
 #elif  defined VISP_HAVE_GDI
     vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
     vpDisplayGDI displayExt(Iext, 670, 0, "External view");
-    printf("GDI\n");
+    // printf("GDI\n");
 #elif  defined VISP_HAVE_OPENCV
     vpDisplayOpenCV displayInt(Iint, 0, 0, "Internal view");
     vpDisplayOpenCV displayExt(Iext, 670, 0, "External view");
-    printf("OPENCV\n");
+    // printf("OPENCV\n");
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
