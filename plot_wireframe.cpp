@@ -47,11 +47,11 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   if (abs(angle) > PI / 2)
     angle -= PI / 2;
 
-  std::cout << "Angle: " << angle << std::endl;
+  // std::cout << "Angle: " << angle << std::endl;
 
   //get center
   u = (p[0].get_x() + p[1].get_x()) / 2;
-  v = (p[0].get_x() + p[3].get_x()) / 2;
+  v = (p[0].get_y() + p[3].get_y()) / 2;
 
   double dist1_x = p[1].get_x() - p[0].get_x();
   dist1_x = pow (dist1_x, 2.0);
@@ -60,6 +60,7 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   dist1_y = pow (dist1_y, 2.0);
 
   double width = pow (dist1_x + dist1_y, 1/2);
+  // printf("width %F \n", width);
 
   double dist2_x = p[3].get_x() - p[0].get_x();
   dist2_x = pow (dist2_x, 2.0);
@@ -68,12 +69,15 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   dist2_y = pow (dist2_y, 2.0);
 
   double height = pow (dist2_x + dist2_y, 1/2);
+  // printf("height %F \n", height);
 
   Area = width * height;
 
-  final.push_back(angle); final.push_back (u);
-  final.push_back(v); final.push_back (Area);
-  final.push_back(0); final.push_back (0);
+  //std::cout << "Area: " << Area << std::endl;
+
+  final.push_back(u); final.push_back (v);
+  final.push_back(Area); final.push_back (0);
+  final.push_back(0); final.push_back (angle);
 
   return final;
 }
@@ -82,7 +86,7 @@ int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 2.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(20)); // angles: 10, -10, 50
 
     std::vector<vpPoint> point(4) ;
     point[0].setWorldCoordinates(-0.1,-0.1, 0);
@@ -93,7 +97,7 @@ int main()
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
-    task.setLambda(0.5);
+    task.setLambda(0.1); //0.5
 
     vpFeaturePoint p[4], pd[4] ;
     for (unsigned int i = 0 ; i < 4 ; i++) {
@@ -106,22 +110,29 @@ int main()
      }
 
     vpCustomFeature f, fd;
-    // f.init();
-    // printf("is it here? \n");
-
-    // f = get_features (p);
-    // printf("check1 \n");
-    // fd = get_features (pd);
-    // printf("check2 \n");
     std::vector<double> v1, v2;
     v1 = get_features (p);
     v2 = get_features (pd);
     f.buildFrom (v1[0], v1[1], v1[2], v1[3], v1[4], v1[5]);
     fd.buildFrom (v2[0], v2[1], v2[2], v2[3], v2[4], v2[5]);
 
-    // f.buildFrom (25, 10, 10, 20, 0, 0);
-    // fd.buildFrom (0, 0, 0, 0, 0, 0);
+    std::cout << "Current: " << std::endl;
+    for (unsigned int i = 0; i < 6; i++){
+      std::cout  << v1[i] << "\t";
+      if (i == 5) std::cout << std::endl;
+    }
+
+    std::cout << "Desired: " << std::endl;
+    for (unsigned int i = 0; i < 6; i++){
+      std::cout << v2[i] << "\t";
+      if (i == 5) std::cout << std::endl;
+    }
+
     task.addFeature(f, fd);
+
+    vpMatrix check_interaction;
+    check_interaction = task.computeInteractionMatrix ();
+    std::cout << check_interaction << std::endl;
 
     vpHomogeneousMatrix wMc, wMo;
     vpSimulatorCamera robot;
@@ -158,17 +169,17 @@ int main()
     sim.setInternalCameraParameters(cam);
     sim.setExternalCameraParameters(cam);
 
-    vpImage<unsigned char> iP(480, 640, 0) ;
+    // vpImage<unsigned char> iP(480, 640, 0) ;
 
-    vpDisplayX displayiP(iP, 0, 670, "Desired Points");
+    // vpDisplayX displayiP(iP, 0, 670, "Desired Points");
 
-    vpDisplay::display(iP);
+    // vpDisplay::display(iP);
 
-    for (unsigned int i = 0; i < 4; i++){
-      pd[i].display (cam, iP, vpColor::red, 1);
-    }
+    // for (unsigned int i = 0; i < 4; i++){
+    //   pd[i].display (cam, iP, vpColor::red, 1);
+    // }
 
-    vpDisplay::flush(iP);
+    // vpDisplay::flush(iP);
 
 
     while(1) {
@@ -181,7 +192,6 @@ int main()
       }
       v1 = get_features (p);
       f.buildFrom (v1[0], v1[1], v1[2], v1[3], v1[4], v1[5]);
-
 
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
