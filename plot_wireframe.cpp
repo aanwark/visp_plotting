@@ -72,6 +72,7 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   // printf("height %F \n", height);
 
   Area = width * height;
+  Area = pow (Area, 1/2);
 
   //std::cout << "Area: " << Area << std::endl;
 
