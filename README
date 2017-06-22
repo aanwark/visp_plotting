@@ -1,1 +1,15 @@
 Personal file for working visp simulation
+
+Before compiling this code, please install visual servo platform (ViSP) c++ library from:
+http://visp.inria.fr/
+or
+https://github.com/lagadic/visp
+
+How to compile:
+
+* Clone this repo
+* mkdir build
+* cd build/
+* cmake ..
+* make
+* ./plot_wireframe
