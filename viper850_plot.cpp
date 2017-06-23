@@ -73,10 +73,11 @@ std::vector<double> get_features (vpFeaturePoint p[4])
 
 int main()
 {
-  #if defined(VISP_HAVE_PTHREAD)
+#if defined(VISP_HAVE_PTHREAD)
+
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 0.9, vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
@@ -183,7 +184,7 @@ int main()
 #endif
 
 #ifdef VISP_HAVE_DISPLAY
-    vpPlot plotter(2, 250*2, 500, 100, 200, "Real time curves plotter");
+    vpPlot plotter(2, 400*2, 800, 100, 200, "Real time curves plotter");
     plotter.setTitle(0, "Visual features error");
     plotter.setTitle(1, "Camera velocities");
 
@@ -253,13 +254,17 @@ int main()
       // std::cout << "Error: " << std::endl << err << std::endl;
 
       // A click to exit
-      if (vpDisplay::getClick(Iint, false)){
-        v1.clear();
-        v2.clear();
-        break;
-      }
+      // if (vpDisplay::getClick(Iint, false)){
+      //   v1.clear();
+      //   v2.clear();
+      //   break;
+      // }
 
       iter++;
+
+      if (( task.getError() ).sumSquare() < 0.0000001)
+        break;
+
 
       if (start) {
         start = false;
@@ -273,6 +278,14 @@ int main()
       vpTime::wait(1000*robot.getSamplingTime());
     }
     task.kill();
+
+#ifdef VISP_HAVE_DISPLAY
+    plotter.saveData(0, "error.dat");
+    plotter.saveData(1, "vc.dat");
+
+    vpDisplay::getClick(plotter.I);
+#endif
+
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

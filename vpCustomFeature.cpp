@@ -74,6 +74,8 @@ vpCustomFeature::interaction (const unsigned int select)
 
     L.eye();
 
+    L[2][2] = 0.1;
+
   if (deallocate == vpBasicFeature::user)
   {
     for (unsigned int i = 0; i < nbParameters; i++)
