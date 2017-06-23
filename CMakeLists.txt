@@ -6,10 +6,10 @@ find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_blob visp_vision vi
 
 include_directories("/usr/local/include/visp3")
 
-set(SRC_LIST viper850.cpp vpCustomFeature.cpp)
+set(SRC_LIST viper850_plot.cpp vpCustomFeature.cpp)
 
 
-get_filename_component(target viper850.cpp NAME_WE)
+get_filename_component(target viper850_plot.cpp NAME_WE)
 include_directories(${VISP_INCLUDE_DIRS})
 add_executable(${target} ${SRC_LIST})
 target_link_libraries(${target} ${VISP_LIBRARIES})

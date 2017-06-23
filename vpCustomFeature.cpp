@@ -1,4 +1,4 @@
-#include "vpCustomFeature.hpp"
+#include "vpCustomFeature.h"
 
 #include <visp3/visual_features/vpBasicFeature.h>
 

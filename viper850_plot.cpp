@@ -9,6 +9,8 @@
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
+#include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/gui/vpPlot.h>
 #include "vpCustomFeature.h"
 #include <vector>
 #include <cmath>
@@ -180,11 +182,37 @@ int main()
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
+#ifdef VISP_HAVE_DISPLAY
+    vpPlot plotter(2, 250*2, 500, 100, 200, "Real time curves plotter");
+    plotter.setTitle(0, "Visual features error");
+    plotter.setTitle(1, "Camera velocities");
+
+    plotter.initGraph(0, 6);
+    plotter.initGraph(1, 6);
+
+    plotter.setLegend(0, 0, "u");
+    plotter.setLegend(0, 1, "v");
+    plotter.setLegend(0, 2, "area");
+    plotter.setLegend(0, 3, "0");
+    plotter.setLegend(0, 4, "0");
+    plotter.setLegend(0, 5, "angle");
+
+    plotter.setLegend(1, 0, "v_x");
+    plotter.setLegend(1, 1, "v_y");
+    plotter.setLegend(1, 2, "v_z");
+    plotter.setLegend(1, 3, "w_x");
+    plotter.setLegend(1, 4, "w_y");
+    plotter.setLegend(1, 5, "w_z");
+#endif
+
+
     vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
     // Modify the camera parameters to match those used in the other simulations
     robot.setCameraParameters(cam);
 
     bool start = true;
+
+    unsigned int iter = 0;
 
     while(1) {
 
@@ -209,6 +237,13 @@ int main()
 
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+
+      // Plotter
+#ifdef VISP_HAVE_DISPLAY
+      plotter.plot(0, iter, task.getError());
+      plotter.plot(1, iter, v);
+#endif
+
       // robot.getVelocity(vpRobot::CAMERA_FRAME, v);
 
       // std::cout << "Velocity: " << std::endl << v << std::endl;
@@ -223,6 +258,8 @@ int main()
         v2.clear();
         break;
       }
+
+      iter++;
 
       if (start) {
         start = false;
