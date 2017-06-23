@@ -16,7 +16,7 @@ class vpCustomFeature  : public vpBasicFeature
  public:
   vpCustomFeature();
   // Destructor
-  virtual ~vpCustomFeature() {};
+  virtual ~vpCustomFeature() {}
 
   // void init() ;
 

@@ -116,23 +116,23 @@ vpCustomFeature::error (const vpBasicFeature &s_star,
 {
   vpColVector e(0), eangle(1), eu(1), ev(1), eArea(1), edummy1(1), edummy2(1);
   try{
-  eangle[0] = s[0] - s_star[0];
-  e = vpColVector::stack(e,eangle) ;
+    eangle[0] = s[0] - s_star[0];
+    e = vpColVector::stack(e,eangle) ;
 
-  eu[0] = s[1] - s_star[1];
-  e = vpColVector::stack(e,eu);
+    eu[0] = s[1] - s_star[1];
+    e = vpColVector::stack(e,eu);
 
-  ev[0] = s[2] - s_star[2];
-  e = vpColVector::stack(e,ev);
+    ev[0] = fabs( s[2] - s_star[2] ); // Area needs to be absolute
+    e = vpColVector::stack(e,ev);
 
-  eArea[0] = s[3] - s_star[3];
-  e = vpColVector::stack(e,eArea);
+    eArea[0] = s[3] - s_star[3];
+    e = vpColVector::stack(e,eArea);
 
-  edummy1[0] = s[4] - s_star[4];
-  e = vpColVector::stack(e,edummy1);
+    edummy1[0] = s[4] - s_star[4];
+    e = vpColVector::stack(e,edummy1);
 
-  edummy2[0] = s[5] - s_star[5];
-  e = vpColVector::stack(e,edummy2);
+    edummy2[0] = s[5] - s_star[5];
+    e = vpColVector::stack(e,edummy2);
   }
 
   catch(...){

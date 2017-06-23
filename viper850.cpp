@@ -59,7 +59,7 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   double vec2X = p[2].get_x() - p[1].get_x();
   double vec1Y = p[0].get_y() - p[1].get_y();
 
-  Area = fabs(vec1X * vec2Y -  vec2X * vec1Y) * 10;
+  Area = fabs(vec1X * vec2Y -  vec2X * vec1Y) * 1;
   //std::cout << "Area: " << Area << std::endl;
 
   final.push_back(u); final.push_back (v);
@@ -71,9 +71,10 @@ std::vector<double> get_features (vpFeaturePoint p[4])
 
 int main()
 {
+  #if defined(VISP_HAVE_PTHREAD)
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 0.9, vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
@@ -209,9 +210,16 @@ int main()
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
+      vpColVector err;
+      err = f.error (fd, 0);
+      std::cout << "Error: " << std::endl << err << std::endl;
+
       // A click to exit
-      if (vpDisplay::getClick(Iint, false))
+      if (vpDisplay::getClick(Iint, false)){
+        v1.clear();
+        v2.clear();
         break;
+      }
 
       if (start) {
         start = false;
@@ -229,4 +237,5 @@ int main()
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#endif
 }
