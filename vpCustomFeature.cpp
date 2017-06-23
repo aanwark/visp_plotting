@@ -115,6 +115,7 @@ vpCustomFeature::error (const vpBasicFeature &s_star,
                         const unsigned int select)
 {
   vpColVector e(0), eangle(1), eu(1), ev(1), eArea(1), edummy1(1), edummy2(1);
+  try{
   eangle[0] = s[0] - s_star[0];
   e = vpColVector::stack(e,eangle) ;
 
@@ -132,6 +133,11 @@ vpCustomFeature::error (const vpBasicFeature &s_star,
 
   edummy2[0] = s[5] - s_star[5];
   e = vpColVector::stack(e,edummy2);
+  }
+
+  catch(...){
+    throw;
+  }
 
   return e;
 }

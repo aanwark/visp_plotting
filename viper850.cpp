@@ -54,27 +54,12 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   u = (p[0].get_x() + p[1].get_x()) / 2;
   v = (p[0].get_y() + p[3].get_y()) / 2;
 
-  double dist1_x = p[1].get_x() - p[0].get_x();
-  dist1_x = pow (dist1_x, 2.0);
+  double vec1X = p[0].get_x() - p[1].get_x();
+  double vec2Y = p[2].get_y() - p[1].get_y();
+  double vec2X = p[2].get_x() - p[1].get_x();
+  double vec1Y = p[0].get_y() - p[1].get_y();
 
-  double dist1_y = p[1].get_y() - p[0].get_y();
-  dist1_y = pow (dist1_y, 2.0);
-
-  double width = pow (dist1_x + dist1_y, 1/2);
-  // printf("width %F \n", width);
-
-  double dist2_x = p[3].get_x() - p[0].get_x();
-  dist2_x = pow (dist2_x, 2.0);
-
-  double dist2_y = p[3].get_y() - p[0].get_y();
-  dist2_y = pow (dist2_y, 2.0);
-
-  double height = pow (dist2_x + dist2_y, 1/2);
-  // printf("height %F \n", height);
-
-  Area = width * height;
-  Area = pow (Area, 1/2);
-
+  Area = fabs(vec1X * vec2Y -  vec2X * vec1Y) * 10;
   //std::cout << "Area: " << Area << std::endl;
 
   final.push_back(u); final.push_back (v);
@@ -88,7 +73,7 @@ int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
@@ -102,7 +87,7 @@ int main()
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
-    task.setLambda(0.1); //0.5
+    task.setLambda(-2.0); //0.5
 
     vpFeaturePoint p[4], pd[4] ;
     for (unsigned int i = 0 ; i < 4 ; i++) {
@@ -110,28 +95,33 @@ int main()
       vpFeatureBuilder::create(pd[i], point[i]);
       point[i].track(cMo);
       vpFeatureBuilder::create(p[i], point[i]);
-      //pd[i].print();
-      //task.addFeature(p[i], pd[i]);
+      // pd[i].print();
+      // task.addFeature(p[i], pd[i]);
      }
 
     vpCustomFeature f, fd;
     std::vector<double> v1, v2;
     v1 = get_features (p);
     v2 = get_features (pd);
-    f.buildFrom (v1[0], v1[1], v1[2], v1[3], v1[4], v1[5]);
-    fd.buildFrom (v2[0], v2[1], v2[2], v2[3], v2[4], v2[5]);
+    f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5));
+    fd.buildFrom (v2.at(0), v2.at(1), v2.at(2), v2.at(3), v2.at(4), v2.at(5));
+
 
     std::cout << "Current: " << std::endl;
     for (unsigned int i = 0; i < 6; i++){
-      std::cout  << v1[i] << "\t";
+      std::cout  << v1.at(i) << "\t";
       if (i == 5) std::cout << std::endl;
     }
 
     std::cout << "Desired: " << std::endl;
     for (unsigned int i = 0; i < 6; i++){
-      std::cout << v2[i] << "\t";
+      std::cout << v2.at(i) << "\t";
       if (i == 5) std::cout << std::endl;
     }
+
+    // Check error: (which is fine)
+    // vpColVector err = f.error(fd, 0);
+    // std::cout << err << std::endl;
 
     task.addFeature(f, fd);
 
@@ -163,12 +153,16 @@ int main()
     robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     robot.set_fMo(wMo);
     bool ret = true;
+
 #if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
     ret =
     #endif
-        robot.initialiseCameraRelativeToObject(cMo);
+
+    robot.initialiseCameraRelativeToObject(cMo);
+
     if (ret == false)
       return 0; // Not able to set the position
+
     robot.setDesiredCameraPosition(cdMo);
     // We modify the default external camera position
     robot.setExternalCameraPosition(vpHomogeneousMatrix(vpTranslationVector(-0.4, 0.4, 2),
@@ -190,20 +184,22 @@ int main()
     robot.setCameraParameters(cam);
 
     bool start = true;
-    
+
     while(1) {
+
       cMo = robot.get_cMo ();
-      
+
       for (unsigned int i = 0 ; i < 4 ; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
       }
 
       v1 = get_features (p);
-      f.buildFrom (v1[0], v1[1], v1[2], v1[3], v1[4], v1[5]);
+      f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5));
 
       vpDisplay::display(Iint);
       robot.getInternalView(Iint);
+
       if (!start) {
         display_trajectory(Iint, point, cMo, cam);
         vpDisplay::displayText(Iint, 40, 120, "Click to stop the servo...", vpColor::red);
@@ -225,7 +221,7 @@ int main()
         vpDisplay::flush(Iint);
         //vpDisplay::getClick(Iint);
       }
-      
+
       vpTime::wait(1000*robot.getSamplingTime());
     }
     task.kill();
