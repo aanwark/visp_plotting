@@ -12,4 +12,4 @@ How to compile:
 * cd build/
 * cmake ..
 * make
-* ./plot_wireframe
+* ./viper850_plot
