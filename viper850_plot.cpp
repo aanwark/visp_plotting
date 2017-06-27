@@ -77,7 +77,7 @@ int main()
 
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(-30));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(20));
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
@@ -90,8 +90,8 @@ int main()
 
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);
-    task.setInteractionMatrixType(vpServo::CURRENT);
-    task.setLambda(-2.0); //0.5
+    task.setInteractionMatrixType(vpServo::DESIRED);
+    task.setLambda(-20.0); //0.5
 
     vpFeaturePoint p[4], pd[4] ;
     for (unsigned int i = 0 ; i < 4 ; i++) {
@@ -107,9 +107,10 @@ int main()
     std::vector<double> v1, v2;
     v1 = get_features (p);
     v2 = get_features (pd);
-    f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5));
-    fd.buildFrom (v2.at(0), v2.at(1), v2.at(2), v2.at(3), v2.at(4), v2.at(5));
-
+    f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5), v2.at(2));
+    fd.buildFrom (v2.at(0), v2.at(1), v2.at(2), v2.at(3), v2.at(4), v2.at(5), v2.at(2));
+    // fd.setA_star (v2.at(2));
+    // fd.print(1);
 
     std::cout << "Current: " << std::endl;
     for (unsigned int i = 0; i < 6; i++){
@@ -225,7 +226,7 @@ int main()
       }
 
       v1 = get_features (p);
-      f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5));
+      f.buildFrom (v1.at(0), v1.at(1), v1.at(2), v1.at(3), v1.at(4), v1.at(5), v2.at(2));
 
       vpDisplay::display(Iint);
       robot.getInternalView(Iint);

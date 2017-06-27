@@ -31,6 +31,8 @@ vpCustomFeature::init()
 
   s.resize(dim_s) ;
 
+  focal_length = 48.1;
+
   if (flags == NULL)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
@@ -60,7 +62,7 @@ void
 vpCustomFeature::setA_star (const double A_star_)
 {
   this->A_star = A_star_;
-  for (unsigned int i = 6; i < nbParameters; i++) flags[i] = true;
+  for (unsigned int i = 2; i < 3; i++) flags[i] = true;
 }
 
 // Interaction Matrix
@@ -73,8 +75,6 @@ vpCustomFeature::interaction (const unsigned int select)
     L.resize(6,6) ;
 
     L.eye();
-
-    L[2][2] = 0.1;
 
   if (deallocate == vpBasicFeature::user)
   {
@@ -108,6 +108,18 @@ vpCustomFeature::interaction (const unsigned int select)
     }
     resetFlags();
   }
+
+    L[0][0] = s[2] / A_star;
+    // L[0][2] = -(s[0] * s[2]) / (focal_length * A_star);
+    // L[0][3] = -(s[0] * s[1]) / focal_length;
+    L[1][1] = s[2] / A_star;
+    // L[1][2] = - (s[1] * s[2]) / (focal_length * A_star);
+    // L[2][3] = - (pow(focal_length, 2.0) + pow(s[1], 2.0)) / focal_length;
+    L[2][2] = - s[2] / (2 * A_star * focal_length);
+
+    // L[2][2] = 0.1;
+    // L[5][5] = -1;
+
 
   return L;
 }
@@ -153,6 +165,7 @@ vpCustomFeature::print (const unsigned int select) const
   std::cout << "\tArea: " << s[3] << std::endl;
   std::cout << "\tdummy1: " << s[4] << std::endl;
   std::cout << "\tdummy2: " << s[5] << std::endl;
+  std::cout << "\tA_star: " << A_star << std::endl;
 }
 
 void
@@ -165,6 +178,7 @@ vpCustomFeature::buildFrom (const double angle, const double u, const double v,
   s[3] = Area;
   s[4] = dummy1;
   s[5] = dummy2;
+  // this->A_star = s[2];
   for (int i = 0; i < 6; i++) flags[i] = true;
 }
 

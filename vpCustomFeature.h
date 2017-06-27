@@ -33,6 +33,8 @@ class vpCustomFeature  : public vpBasicFeature
   // vpMatrix interaction (const unsigned int select= FEATURE_ALL) {vpMatrix a; return a;};
   // vpCustomFeature *duplicate() const {return 0;};
 
+  double focal_length;
+
 
   //dummy1 and dummy2 are zero values
   void buildFrom (const double angle, const double u, const double v,
