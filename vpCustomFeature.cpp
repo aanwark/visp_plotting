@@ -109,16 +109,31 @@ vpCustomFeature::interaction (const unsigned int select)
     resetFlags();
   }
 
-    L[0][0] = s[2] / A_star;
-    // L[0][2] = -(s[0] * s[2]) / (focal_length * A_star);
-    // L[0][3] = -(s[0] * s[1]) / focal_length;
-    L[1][1] = s[2] / A_star;
-    // L[1][2] = - (s[1] * s[2]) / (focal_length * A_star);
-    // L[2][3] = - (pow(focal_length, 2.0) + pow(s[1], 2.0)) / focal_length;
-    L[2][2] = - s[2] / (2 * A_star * focal_length);
+  // L[0][0] = s[2] / A_star;
+  // L[0][2] = - (s[0] * s[2]) / (focal_length * A_star);
+  // L[0][3] = - (s[0] * s[1]) / focal_length;
+  // L[1][1] = s[2] / A_star;
+  // L[1][2] = - (s[1] * s[2]) / (focal_length * A_star);
+  // L[2][3] = - (pow(focal_length, 2.0) + pow(s[1], 2.0)) / focal_length;
+  // L[2][2] = - A_star / (2 * s[2] * focal_length);
+  // L[2][2] =  A_star;
 
-    // L[2][2] = 0.1;
-    // L[5][5] = -1;
+  // modified value
+  // L[2][2] = (focal_length * pow (s[2], 3));
+
+  // L[2][2] = 0.1;
+  // L[5][5] = - 1;
+
+  // New Matrix
+  double z_star = 1.0;
+  L[0][0] = (focal_length * s[2]) / z_star * A_star;
+  L[0][2] = - (s[0] * s[2]) / z_star * A_star;
+  L[0][5] = - s[1];
+  L[1][1] = (focal_length * s[2]) / z_star * A_star;
+  L[1][2] = - (s[1] * s[2]) / z_star * A_star;
+  L[1][5] = s[0];
+  L[2][2] =  (pow(s[2], 2)) / (z_star * A_star);
+  L[5][5] =  1;
 
 
   return L;
