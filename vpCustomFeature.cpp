@@ -126,15 +126,26 @@ vpCustomFeature::interaction (const unsigned int select)
 
   // New Matrix
   double z_star = 1.0;
+
   L[0][0] = (focal_length * s[2]) / z_star * A_star;
   L[0][2] = - (s[0] * s[2]) / z_star * A_star;
+  L[0][3] = - (s[0] * s[1]) / focal_length;
+  L[0][4] = (pow(focal_length, 2.0) + pow(s[0], 2)) / focal_length;
   L[0][5] = - s[1];
+
   L[1][1] = (focal_length * s[2]) / z_star * A_star;
   L[1][2] = - (s[1] * s[2]) / z_star * A_star;
+  L[1][3] = - (pow(focal_length, 2.0) + pow(s[1], 2)) / focal_length;
+  L[1][4] = (s[0] * s[1]) / focal_length ;
   L[1][5] = s[0];
-  L[2][2] =  (pow(s[2], 2)) / (z_star * A_star);
-  L[5][5] =  1;
 
+  L[2][2] =  (pow(s[2], 2)) / (z_star * A_star);
+
+  L[3][3] = 1;
+
+  L[4][4] = 1;
+
+  L[5][5] = 0.1;
 
   return L;
 }

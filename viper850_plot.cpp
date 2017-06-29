@@ -65,28 +65,29 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   //std::cout << "Area: " << Area << std::endl;
 
   // omega_x
-  double a = vec1X;
-  double b = p[3].get_x() - p[2].get_x();
-  double c = p[3].get_y() - p[0].get_y();
-  double d = vec2Y;
+  double a = fabs (vec1X);
+  double b = fabs (p[3].get_x() - p[2].get_x());
+  double c = fabs (p[3].get_y() - p[0].get_y());
+  double d = fabs (vec2Y);
 
   double omega_x = log (c / d);
   double omega_y = log (a / b);
 
   final.push_back(u); final.push_back (v);
   final.push_back(Area); final.push_back (omega_x);
-  final.push_back(omega_y); final.push_back (angle);
+  final.push_back(omega_y); final.push_back(angle);
 
   return final;
 }
 
 int main()
 {
+
 #if defined(VISP_HAVE_PTHREAD)
 
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(20));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(-20), vpMath::rad(30), vpMath::rad(20)); // -20, 30
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
