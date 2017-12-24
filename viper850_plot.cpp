@@ -42,6 +42,7 @@ std::vector<double> get_features (vpFeaturePoint p[4])
 {
   //vpCustomFeature p_hat;
   double angle, u, v, Area;
+  double gain = 1;
   std::vector<double> final;
 
   //get angle
@@ -70,11 +71,11 @@ std::vector<double> get_features (vpFeaturePoint p[4])
   double c = fabs (p[3].get_y() - p[0].get_y());
   double d = fabs (vec2Y);
 
-  // double omega_x = log (c / d);
-  // double omega_y = log (a / b);
+  double omega_x = gain * log (c / d);
+  double omega_y = gain * log (a / b);
 
-  double omega_x = c / d;
-  double omega_y = a / b;
+  // double omega_x = c / d;
+  // double omega_y = a / b;
 
 
   final.push_back(u); final.push_back (v);
