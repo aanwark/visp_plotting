@@ -209,8 +209,8 @@ int main()
     plotter.setLegend(0, 0, "u");
     plotter.setLegend(0, 1, "v");
     plotter.setLegend(0, 2, "area");
-    plotter.setLegend(0, 3, "0");
-    plotter.setLegend(0, 4, "0");
+    plotter.setLegend(0, 3, "omega_x");
+    plotter.setLegend(0, 4, "omega_y");
     plotter.setLegend(0, 5, "angle");
 
     plotter.setLegend(1, 0, "v_x");
