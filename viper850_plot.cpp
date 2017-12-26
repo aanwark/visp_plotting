@@ -42,7 +42,7 @@ std::vector<double> get_features (vpFeaturePoint p[4])
 {
   //vpCustomFeature p_hat;
   double angle, u, v, Area;
-  double gain = 1;
+  double gain = 0.1;
   std::vector<double> final;
 
   //get angle
