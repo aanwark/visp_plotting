@@ -31,7 +31,7 @@ vpCustomFeature::init()
 
   s.resize(dim_s) ;
 
-  focal_length = 48.1;
+  focal_length = 0.0481; // in milimeters = 48.1
 
   if (flags == NULL)
     flags = new bool[nbParameters];
@@ -76,6 +76,8 @@ vpCustomFeature::interaction (const unsigned int select)
 
     L.eye();
 
+    double z_star = 0.75;
+
   if (deallocate == vpBasicFeature::user)
   {
     for (unsigned int i = 0; i < nbParameters; i++)
@@ -109,17 +111,26 @@ vpCustomFeature::interaction (const unsigned int select)
     resetFlags();
   }
 
-    L[0][0] = s[2] / A_star;
-    // L[0][2] = -(s[0] * s[2]) / (focal_length * A_star);
-    // L[0][3] = -(s[0] * s[1]) / focal_length;
-    L[1][1] = s[2] / A_star;
-    // L[1][2] = - (s[1] * s[2]) / (focal_length * A_star);
-    // L[2][3] = - (pow(focal_length, 2.0) + pow(s[1], 2.0)) / focal_length;
-    L[2][2] = - s[2] / (2 * A_star * focal_length);
+    // L[0][0] = s[2] / A_star;
+    // // L[0][2] = -(s[0] * s[2]) / (focal_length * A_star);
+    // // L[0][3] = -(s[0] * s[1]) / focal_length;
+    // L[1][1] = s[2] / A_star;
+    // // L[1][2] = - (s[1] * s[2]) / (focal_length * A_star);
+    // // L[2][3] = - (pow(focal_length, 2.0) + pow(s[1], 2.0)) / focal_length;
+    // L[2][2] = - s[2] / (2 * A_star * focal_length);
 
-    // L[2][2] = 0.1;
-    // L[5][5] = -1;
+    // // L[2][2] = 0.1;
+    // // L[5][5] = -1;
 
+  L[0][0] = (focal_length * s[2]) / (z_star * A_star);
+  L[0][2] = - (s[0] * s[2]) / (z_star * A_star);
+  L[0][3] = - (s[1]);
+
+  L[1][1] = (focal_length * s[2]) / (z_star * A_star);
+  L[1][2] = - (s[1] * s[2]) / (z_star * A_star);
+  L[1][3] = s[0];
+
+  L[2][2] = pow(s[2],2) / (z_star * A_star);
 
   return L;
 }
