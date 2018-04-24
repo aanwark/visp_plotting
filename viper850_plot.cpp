@@ -91,7 +91,8 @@ int main()
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::DESIRED);
-    task.setLambda(-0.5); //0.5
+    task.setLambda(-0.8, -0.5, 0.1); //0.5
+
 
     vpFeaturePoint p[4], pd[4] ;
     for (unsigned int i = 0 ; i < 4 ; i++) {
